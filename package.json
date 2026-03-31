@@ -1,0 +1,19 @@
+{
+  "name": "algeria-prices",
+  "version": "1.0.0",
+  "main": "server.js",
+  "scripts": {
+    "start": "node server.js"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "description": "Real-time Algeria price tracker",
+  "engines": {
+    "node": ">=18"
+  },
+  "dependencies": {
+    "eventsource": "^4.1.0",
+    "express": "^5.2.1"
+  }
+}
