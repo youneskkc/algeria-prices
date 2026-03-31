@@ -17,31 +17,44 @@ const TAG_MAP = {
   'algerian-sources': 'مصادر جزائرية'
 };
 
-// Price extraction from Arabic text
+// Price extraction from Arabic and French text
 function extractPrices(text) {
   if (!text) return [];
   const prices = [];
-  // Match patterns like: 1,500 دج | 1500 DA | 15.000.000 دينار | 2 مليون | 850,000 DZD
   const patterns = [
-    /(\d[\d.,\s]*\d)\s*(دج|د\.ج|دينار|جزائري|DA|DZD|مليون|مليار|ملايين)/gi,
-    /(سعر|ثمن|تكلفة|prix|price)[:\s]+(\d[\d.,\s]*)/gi,
-    /(\d[\d.,]*)\s*(مليون|مليار)\s*(سنتيم|دج|دينار)?/gi
+    // Arabic: 1,500 دج | 1500 DA | 15.000.000 دينار | 850,000 DZD
+    /(\d[\d.,\s]*\d)\s*(دج|د\.ج|دينار|جزائري|DA|DZD)/gi,
+    // Arabic millions/billions: 2 مليون | 15 مليار
+    /(\d[\d.,]*)\s*(مليون|مليار|ملايين)\s*(سنتيم|دج|دينار)?/gi,
+    // French: 1.500 DA | 2 500 000 DZD | 15,000 dinars
+    /(\d[\d\s.,]*\d)\s*(DA|DZD|dinars?|millions?)\b/gi,
+    // French price labels: prix: 1500 | tarif: 2000 | coût: 850
+    /(prix|tarif|co[uû]t|montant)\s*[:=]\s*(\d[\d\s.,]*)\s*(DA|DZD|dinars?)?/gi,
+    // Arabic price labels: سعر: 1500 | ثمن 2000
+    /(سعر|ثمن|تكلفة|بسعر)\s*[:]*\s*(\d[\d\s.,]*)\s*(دج|DA|DZD|دينار)?/gi,
+    // Standalone large numbers near currency context (e.g. "15 000 000")
+    /\b(\d{1,3}(?:[\s.,]\d{3}){1,4})\s*(دج|DA|DZD)\b/gi,
+    // Euro/USD amounts (some Algerian sites list in EUR)
+    /(\d[\d\s.,]*)\s*(€|EUR|euros?)\b/gi
   ];
 
   for (const pat of patterns) {
     let m;
     while ((m = pat.exec(text)) !== null) {
-      const ctx = text.substring(Math.max(0, m.index - 60), Math.min(text.length, m.index + m[0].length + 60)).trim();
+      const start = Math.max(0, m.index - 80);
+      const end = Math.min(text.length, m.index + m[0].length + 80);
+      const ctx = text.substring(start, end).replace(/\n/g, ' ').trim();
       prices.push({ value: m[0].trim(), context: ctx });
     }
   }
-  // Deduplicate
+  // Deduplicate by value
   const seen = new Set();
   return prices.filter(p => {
-    if (seen.has(p.value)) return false;
-    seen.add(p.value);
+    const key = p.value.replace(/\s/g, '');
+    if (seen.has(key)) return false;
+    seen.add(key);
     return true;
-  });
+  }).slice(0, 10); // max 10 prices per page
 }
 
 // SSE endpoint that proxies Firehose and extracts prices
