@@ -1,0 +1,485 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>أسعار الجزائر المباشرة</title>
+<style>
+  @import url('https://fonts.googleapis.com/css2?family=IBM+Plex+Sans+Arabic:wght@300;400;500;600;700&display=swap');
+
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+
+  :root {
+    --bg: #fafafa;
+    --surface: #ffffff;
+    --border: #e8e8e8;
+    --text: #1a1a1a;
+    --text2: #6b6b6b;
+    --text3: #999;
+    --accent: #0a7d3a;
+    --accent-light: #e8f5ee;
+    --estate: #1a56db;
+    --estate-bg: #eff4ff;
+    --food: #d97706;
+    --food-bg: #fffbeb;
+    --fuel: #dc2626;
+    --fuel-bg: #fef2f2;
+    --services: #7c3aed;
+    --services-bg: #f5f3ff;
+    --general: #6b6b6b;
+    --general-bg: #f5f5f5;
+  }
+
+  body {
+    font-family: 'IBM Plex Sans Arabic', sans-serif;
+    background: var(--bg);
+    color: var(--text);
+    min-height: 100vh;
+  }
+
+  /* HEADER */
+  header {
+    background: var(--surface);
+    border-bottom: 1px solid var(--border);
+    padding: 16px 24px;
+    position: sticky;
+    top: 0;
+    z-index: 100;
+  }
+  .header-inner {
+    max-width: 900px;
+    margin: 0 auto;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+  }
+  .logo {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+  }
+  .logo h1 {
+    font-size: 18px;
+    font-weight: 600;
+    letter-spacing: -0.3px;
+  }
+  .logo .dot {
+    width: 8px;
+    height: 8px;
+    border-radius: 50%;
+    background: #ccc;
+    animation: pulse 2s infinite;
+  }
+  .logo .dot.live { background: #22c55e; }
+  @keyframes pulse {
+    0%, 100% { opacity: 1; }
+    50% { opacity: 0.4; }
+  }
+  .status {
+    font-size: 12px;
+    color: var(--text3);
+    display: flex;
+    align-items: center;
+    gap: 6px;
+  }
+  .count-badge {
+    background: var(--accent-light);
+    color: var(--accent);
+    font-weight: 600;
+    font-size: 11px;
+    padding: 2px 8px;
+    border-radius: 10px;
+  }
+
+  /* FILTERS */
+  .filters {
+    max-width: 900px;
+    margin: 0 auto;
+    padding: 12px 24px;
+    display: flex;
+    gap: 8px;
+    flex-wrap: wrap;
+  }
+  .filter-btn {
+    border: 1px solid var(--border);
+    background: var(--surface);
+    padding: 6px 14px;
+    border-radius: 20px;
+    font-family: inherit;
+    font-size: 13px;
+    cursor: pointer;
+    transition: all 0.15s;
+    color: var(--text2);
+  }
+  .filter-btn:hover { border-color: #ccc; }
+  .filter-btn.active { background: var(--text); color: #fff; border-color: var(--text); }
+  .filter-btn .cnt { font-size: 11px; opacity: 0.7; margin-right: 4px; }
+
+  /* FEED */
+  .feed {
+    max-width: 900px;
+    margin: 0 auto;
+    padding: 8px 24px 40px;
+  }
+  .empty-state {
+    text-align: center;
+    padding: 80px 20px;
+    color: var(--text3);
+  }
+  .empty-state svg { width: 48px; height: 48px; margin-bottom: 16px; opacity: 0.3; }
+  .empty-state p { font-size: 14px; line-height: 1.8; }
+
+  /* CARD */
+  .card {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 10px;
+    padding: 16px 18px;
+    margin-bottom: 8px;
+    transition: all 0.2s;
+    animation: slideIn 0.3s ease;
+  }
+  .card:hover { border-color: #d0d0d0; }
+  @keyframes slideIn {
+    from { opacity: 0; transform: translateY(-8px); }
+    to { opacity: 1; transform: translateY(0); }
+  }
+  .card-top {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    margin-bottom: 8px;
+  }
+  .tag {
+    font-size: 11px;
+    font-weight: 500;
+    padding: 3px 10px;
+    border-radius: 6px;
+  }
+  .tag-real-estate { background: var(--estate-bg); color: var(--estate); }
+  .tag-food-vegetables { background: var(--food-bg); color: var(--food); }
+  .tag-fuel { background: var(--fuel-bg); color: var(--fuel); }
+  .tag-services { background: var(--services-bg); color: var(--services); }
+  .tag-algerian-sources { background: var(--general-bg); color: var(--general); }
+
+  .time {
+    font-size: 11px;
+    color: var(--text3);
+    direction: ltr;
+  }
+  .card-title {
+    font-size: 14px;
+    font-weight: 500;
+    line-height: 1.6;
+    margin-bottom: 8px;
+  }
+  .card-title a {
+    color: var(--text);
+    text-decoration: none;
+  }
+  .card-title a:hover { text-decoration: underline; }
+
+  .prices-list {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 6px;
+    margin-bottom: 8px;
+  }
+  .price-chip {
+    background: var(--accent-light);
+    color: var(--accent);
+    font-size: 13px;
+    font-weight: 600;
+    padding: 4px 12px;
+    border-radius: 6px;
+    direction: rtl;
+  }
+  .price-context {
+    font-size: 12px;
+    color: var(--text2);
+    line-height: 1.7;
+    background: #f8f8f8;
+    padding: 8px 12px;
+    border-radius: 6px;
+    margin-bottom: 8px;
+    max-height: 80px;
+    overflow: hidden;
+  }
+  .card-footer {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+  }
+  .source {
+    font-size: 11px;
+    color: var(--text3);
+    direction: ltr;
+    text-align: left;
+    max-width: 60%;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+  }
+  .source a { color: var(--text3); text-decoration: none; }
+  .source a:hover { color: var(--text2); text-decoration: underline; }
+  .lang-badge {
+    font-size: 10px;
+    padding: 2px 6px;
+    border: 1px solid var(--border);
+    border-radius: 4px;
+    color: var(--text3);
+  }
+
+  /* TICKER BAR */
+  .ticker-bar {
+    background: var(--text);
+    color: #fff;
+    overflow: hidden;
+    height: 32px;
+    display: flex;
+    align-items: center;
+    font-size: 12px;
+    position: relative;
+  }
+  .ticker-label {
+    background: var(--accent);
+    padding: 0 12px;
+    height: 100%;
+    display: flex;
+    align-items: center;
+    font-weight: 600;
+    font-size: 11px;
+    white-space: nowrap;
+    z-index: 2;
+  }
+  .ticker-track {
+    display: flex;
+    animation: scroll 40s linear infinite;
+    white-space: nowrap;
+    gap: 32px;
+    padding: 0 20px;
+  }
+  @keyframes scroll {
+    from { transform: translateX(100%); }
+    to { transform: translateX(-100%); }
+  }
+  .ticker-item {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    white-space: nowrap;
+  }
+  .ticker-item .ti-price {
+    color: #4ade80;
+    font-weight: 600;
+  }
+
+  /* RESPONSIVE */
+  @media (max-width: 640px) {
+    .header-inner { flex-wrap: wrap; gap: 8px; }
+    .filters { padding: 8px 12px; }
+    .feed { padding: 8px 12px 40px; }
+    .card { padding: 12px 14px; }
+  }
+</style>
+</head>
+<body>
+
+<!-- TICKER -->
+<div class="ticker-bar">
+  <div class="ticker-label">آخر الأسعار</div>
+  <div class="ticker-track" id="tickerTrack">
+    <div class="ticker-item" style="opacity:0.5">في انتظار البيانات...</div>
+  </div>
+</div>
+
+<!-- HEADER -->
+<header>
+  <div class="header-inner">
+    <div class="logo">
+      <div class="dot" id="statusDot"></div>
+      <h1>أسعار الجزائر</h1>
+    </div>
+    <div class="status">
+      <span id="statusText">جاري الاتصال...</span>
+      <span class="count-badge" id="countBadge">0</span>
+    </div>
+  </div>
+</header>
+
+<!-- FILTERS -->
+<div class="filters">
+  <button class="filter-btn active" data-filter="all">الكل <span class="cnt" id="cnt-all">0</span></button>
+  <button class="filter-btn" data-filter="real-estate">عقارات <span class="cnt" id="cnt-real-estate">0</span></button>
+  <button class="filter-btn" data-filter="food-vegetables">غذاء و خضر <span class="cnt" id="cnt-food-vegetables">0</span></button>
+  <button class="filter-btn" data-filter="fuel">وقود <span class="cnt" id="cnt-fuel">0</span></button>
+  <button class="filter-btn" data-filter="services">خدمات <span class="cnt" id="cnt-services">0</span></button>
+  <button class="filter-btn" data-filter="algerian-sources">مصادر جزائرية <span class="cnt" id="cnt-algerian-sources">0</span></button>
+</div>
+
+<!-- FEED -->
+<div class="feed" id="feed">
+  <div class="empty-state" id="emptyState">
+    <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M12 6v6l4 2m6-2a10 10 0 11-20 0 10 10 0 0120 0z"/></svg>
+    <p>في انتظار بيانات الأسعار من المصادر الجزائرية...<br>سيتم عرض الأسعار فور ورودها</p>
+  </div>
+</div>
+
+<script>
+const CATEGORY_AR = {
+  'real-estate': 'عقارات',
+  'food-vegetables': 'غذاء و خضر',
+  'fuel': 'وقود',
+  'services': 'خدمات',
+  'algerian-sources': 'مصادر جزائرية'
+};
+
+let items = [];
+let activeFilter = 'all';
+let counts = { all: 0, 'real-estate': 0, 'food-vegetables': 0, 'fuel': 0, 'services': 0, 'algerian-sources': 0 };
+const MAX_ITEMS = 200;
+
+// Filters
+document.querySelectorAll('.filter-btn').forEach(btn => {
+  btn.addEventListener('click', () => {
+    document.querySelector('.filter-btn.active').classList.remove('active');
+    btn.classList.add('active');
+    activeFilter = btn.dataset.filter;
+    renderFeed();
+  });
+});
+
+function formatTime(iso) {
+  if (!iso) return '';
+  const d = new Date(iso);
+  const now = new Date();
+  const diff = (now - d) / 1000;
+  if (diff < 60) return 'الآن';
+  if (diff < 3600) return Math.floor(diff / 60) + ' د';
+  if (diff < 86400) return Math.floor(diff / 3600) + ' س';
+  return d.toLocaleDateString('ar-DZ', { month: 'short', day: 'numeric' });
+}
+
+function extractDomain(url) {
+  try { return new URL(url).hostname; } catch { return url; }
+}
+
+function renderCard(item) {
+  const tag = item.tag || 'algerian-sources';
+  const catAr = CATEGORY_AR[tag] || 'عام';
+  const pricesHtml = item.prices.length > 0
+    ? `<div class="prices-list">${item.prices.map(p => `<span class="price-chip">${p.value}</span>`).join('')}</div>`
+    : '';
+  const contextHtml = item.prices.length > 0
+    ? `<div class="price-context">${item.prices[0].context}</div>`
+    : (item.snippet ? `<div class="price-context">${item.snippet.substring(0, 150)}...</div>` : '');
+
+  return `<div class="card" data-tag="${tag}">
+    <div class="card-top">
+      <span class="tag tag-${tag}">${catAr}</span>
+      <span class="time">${formatTime(item.time)}</span>
+    </div>
+    <div class="card-title"><a href="${item.url}" target="_blank" rel="noopener">${item.title || 'بدون عنوان'}</a></div>
+    ${pricesHtml}
+    ${contextHtml}
+    <div class="card-footer">
+      <span class="source"><a href="${item.url}" target="_blank" rel="noopener">${extractDomain(item.url)}</a></span>
+      ${item.language ? `<span class="lang-badge">${item.language}</span>` : ''}
+    </div>
+  </div>`;
+}
+
+function renderFeed() {
+  const feed = document.getElementById('feed');
+  const empty = document.getElementById('emptyState');
+  const filtered = activeFilter === 'all' ? items : items.filter(i => i.tag === activeFilter);
+
+  if (filtered.length === 0) {
+    empty.style.display = 'block';
+    feed.querySelectorAll('.card').forEach(c => c.remove());
+    return;
+  }
+  empty.style.display = 'none';
+  feed.innerHTML = filtered.map(renderCard).join('');
+}
+
+function updateCounts() {
+  Object.keys(counts).forEach(k => {
+    const el = document.getElementById('cnt-' + k);
+    if (el) el.textContent = counts[k];
+  });
+  document.getElementById('countBadge').textContent = counts.all;
+}
+
+function addItem(item) {
+  items.unshift(item);
+  if (items.length > MAX_ITEMS) items.pop();
+  const tag = item.tag || 'algerian-sources';
+  counts.all++;
+  counts[tag] = (counts[tag] || 0) + 1;
+  updateCounts();
+  updateTicker(item);
+  renderFeed();
+}
+
+function updateTicker(item) {
+  const track = document.getElementById('tickerTrack');
+  if (item.prices.length === 0) return;
+  const title = (item.title || '').substring(0, 40);
+  const price = item.prices[0].value;
+  const el = document.createElement('div');
+  el.className = 'ticker-item';
+  el.innerHTML = `<span>${title}</span><span class="ti-price">${price}</span>`;
+  track.appendChild(el);
+  // Remove initial placeholder
+  const placeholder = track.querySelector('.ticker-item[style]');
+  if (placeholder) placeholder.remove();
+  // Keep ticker manageable
+  while (track.children.length > 30) track.removeChild(track.firstChild);
+}
+
+// SSE Connection with auto-reconnect
+function connect() {
+  const dot = document.getElementById('statusDot');
+  const statusText = document.getElementById('statusText');
+
+  dot.classList.remove('live');
+  statusText.textContent = 'جاري الاتصال...';
+
+  const es = new EventSource('/api/stream?since=24h');
+
+  es.addEventListener('connected', () => {
+    dot.classList.add('live');
+    statusText.textContent = 'متصل — بث مباشر';
+  });
+
+  es.addEventListener('price', (e) => {
+    try {
+      const item = JSON.parse(e.data);
+      addItem(item);
+    } catch {}
+  });
+
+  es.addEventListener('end', () => {
+    statusText.textContent = 'إعادة الاتصال...';
+    dot.classList.remove('live');
+    es.close();
+    setTimeout(connect, 3000);
+  });
+
+  es.addEventListener('error', () => {
+    statusText.textContent = 'خطأ — إعادة المحاولة...';
+    dot.classList.remove('live');
+    es.close();
+    setTimeout(connect, 5000);
+  });
+
+  es.addEventListener('reconnecting', () => {
+    statusText.textContent = 'إعادة الاتصال...';
+  });
+}
+
+connect();
+</script>
+</body>
+</html>
