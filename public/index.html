@@ -254,7 +254,7 @@
   }
   .ticker-track {
     display: flex;
-    animation: scroll 40s linear infinite;
+    animation: scroll 120s linear infinite;
     white-space: nowrap;
     gap: 32px;
     padding: 0 20px;
@@ -263,6 +263,7 @@
     from { transform: translateX(100%); }
     to { transform: translateX(-100%); }
   }
+  .ticker-bar:hover .ticker-track { animation-play-state: paused; }
   .ticker-item {
     display: flex;
     align-items: center;
